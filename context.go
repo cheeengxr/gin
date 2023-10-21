@@ -168,6 +168,14 @@ func (c *Context) FullPath() string {
 // Next should be used only inside middleware.
 // It executes the pending handlers in the chain inside the calling handler.
 // See example in GitHub.
+
+// **notepoint
+// 虽然 handlers 是一个切片，但是 Next 方法并未简单实现成一个对 handlers 的遍历，
+// 而是引入了一个处理进度的记录 index，它被初始化为 0，在方法一开始的时候执行累加，
+// 在一个方法执行结束以后再次执行累加。
+// Next 被设计成这样跟它的用法有很大关系，主要是为了跟一些中间件函数配合。
+// 比如当某个 handler 执行的时候触发了 panic，在中间件中可以使用 recover 接住错误，
+// 然后再次调用 Next，即可继续执行后面的 handler，不会因为一个 handler 的问题影响到整个 handlers 数组。
 func (c *Context) Next() {
 	c.index++
 	for c.index < int8(len(c.handlers)) {

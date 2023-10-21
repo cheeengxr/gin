@@ -589,6 +589,11 @@ func (engine *Engine) HandleContext(c *Context) {
 	c.index = oldIndexValue
 }
 
+// 在 handleHTTPRequest 方法中最主要做的是两件事，
+// 首先根据请求的地址从基数树中拿取之前注册过的方法，
+// 这里会将 handlers 赋值给本次处理的 Context，
+// 然后调用 Context 的 Next 函数来执行 handlers 中的方法，
+// 最后在 Context 的 responseWriter 类型对象中写入本次请求的返回数据。
 func (engine *Engine) handleHTTPRequest(c *Context) {
 	httpMethod := c.Request.Method
 	rPath := c.Request.URL.Path
